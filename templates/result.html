@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Prediction Result</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f7fb;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 50px auto;
+      background: #fff;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    h1 {
+      color: #2c3e50;
+      margin-bottom: 20px;
+    }
+
+    .result-box {
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    /* Default neutral */
+    .result {
+      background: #ecf0f1;
+      color: #2c3e50;
+    }
+
+    /* You can dynamically assign these classes from Flask */
+    .benign {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .malignant {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .info {
+      font-size: 15px;
+      margin: 10px 0;
+      color: #555;
+    }
+
+    .btn {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 10px 20px;
+      background: #3498db;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      font-size: 15px;
+    }
+
+    .btn:hover {
+      background: #2980b9;
+    }
+
+    .probability {
+      background: #eef6ff;
+      padding: 10px;
+      border-radius: 6px;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <h1>🔍 Prediction Result</h1>
+
+    <!-- Result Box -->
+    <div class="result-box result">
+      {{ prediction }}
+    </div>
+
+    <!-- Probability -->
+    {% if probability %}
+      <div class="probability">
+        <strong>Confidence:</strong> {{ probability }}
+      </div>
+    {% endif %}
+
+    <!-- Raw Label -->
+    <p class="info"><strong>Raw Label:</strong> {{ raw }}</p>
+
+    <!-- Back Button -->
+    <a href="{{ url_for('index') }}" class="btn">⬅ Back to Input</a>
+
+  </div>
+</body>
+</html>

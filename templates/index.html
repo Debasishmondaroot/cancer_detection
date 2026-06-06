@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Cancer Detection - Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f7fb;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 40px auto;
+      background: #fff;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+    }
+
+    textarea {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      resize: vertical;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      background: #3498db;
+      border: none;
+      color: white;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #2980b9;
+    }
+
+    .flashes {
+      list-style: none;
+      padding: 10px;
+      background: #ffecec;
+      border: 1px solid #ffb3b3;
+      border-radius: 6px;
+      color: #c0392b;
+    }
+
+    ol {
+      padding-left: 20px;
+    }
+
+    .info {
+      background: #eef6ff;
+      padding: 10px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <h1>🧬 Cancer Detection (Random Forest)</h1>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul class="flashes">
+          {% for msg in messages %}
+            <li>{{ msg }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <!-- Instructions -->
+    <div class="info">
+      Enter all feature values as <strong>comma-separated numbers</strong> in the exact order shown below.
+      <br>⚠️ Do not include the target/output value.
+    </div>
+
+    <!-- Form -->
+    <form method="post" action="{{ url_for('predict') }}">
+      <textarea 
+        name="features" 
+        placeholder="Example: 14.2, 10.4, 92.7, 654.3, ..."
+        rows="5"
+        required>
+      </textarea>
+
+      <button type="submit">🔍 Predict</button>
+    </form>
+
+    <!-- Feature List -->
+    <h3>📋 Feature Order</h3>
+    <ol>
+      <li>mean radius</li>
+      <li>mean texture</li>
+      <li>mean perimeter</li>
+      <li>mean area</li>
+      <li>mean smoothness</li>
+      <li>mean compactness</li>
+      <li>mean concavity</li>
+      <li>mean concave points</li>
+      <li>mean symmetry</li>
+      <li>mean fractal dimension</li>
+      <li>radius error</li>
+      <li>texture error</li>
+      <li>perimeter error</li>
+      <li>area error</li>
+      <li>smoothness error</li>
+      <li>compactness error</li>
+      <li>concavity error</li>
+      <li>concave points error</li>
+      <li>symmetry error</li>
+      <li>fractal dimension error</li>
+      <li>worst radius</li>
+      <li>worst texture</li>
+      <li>worst perimeter</li>
+      <li>worst area</li>
+      <li>worst smoothness</li>
+      <li>worst compactness</li>
+      <li>worst concavity</li>
+      <li>worst concave points</li>
+      <li>worst symmetry</li>
+      <li>worst fractal dimension</li>
+    </ol>
+
+    <!-- Footer Note -->
+    <p style="font-size: 13px; color: gray;">
+      Make sure your trained model is saved inside <code>saved_model/</code> as 
+      <code>cancer_random_forest.pkl</code> or <code>cancer_model.pkl</code>.
+    </p>
+
+  </div>
+</body>
+</html>
