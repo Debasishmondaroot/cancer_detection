@@ -1,12 +1,19 @@
+```python
 from flask import Flask, render_template, request, redirect, url_for, flash
 import joblib
 import numpy as np
+import numpy
+import sklearn
 import os
+
+print("=" * 50)
+print("SKLEARN VERSION:", sklearn.__version__)
+print("NUMPY VERSION:", numpy.__version__)
+print("=" * 50)
 
 app = Flask(__name__)
 app.secret_key = "replace_this_with_a_random_secret"
 
-# Try loading model from saved_model folder (two common names)
 MODEL_PATHS = [
     os.path.join("saved_model", "cancer_random_forest.pkl"),
     os.path.join("saved_model", "cancer_model.pkl"),
@@ -15,55 +22,68 @@ MODEL_PATHS = [
 ]
 
 model = None
+
 for p in MODEL_PATHS:
     if os.path.exists(p):
         try:
             model = joblib.load(p)
             print(f"Loaded model from: {p}")
+            print("MODEL TYPE:", type(model))
             break
         except Exception as e:
             print(f"Found file {p} but failed to load: {e}")
 
 @app.route("/")
 def index():
-    # Display simple input form with placeholders for feature values
     return render_template("index.html")
 
 @app.route("/predict", methods=["POST"])
 def predict():
     global model
+
     if model is None:
-        flash("Model file not found. Place the trained model (cancer_random_forest.pkl or cancer_model.pkl) inside the saved_model/ folder or project root.")
+        flash("Model file not found.")
         return redirect(url_for("index"))
 
     try:
-        # Read features from form; expect all numeric inputs separated by commas or separate fields
-        # We'll accept a single big textarea named 'features' with comma-separated values
         features_text = request.form.get("features", "").strip()
+
         if not features_text:
-            flash("Please enter comma-separated feature values in the box.")
+            flash("Please enter comma-separated feature values.")
             return redirect(url_for("index"))
 
-        # parse numbers
-        parts = [p.strip() for p in features_text.split(",") if p.strip()!='']
+        parts = [p.strip() for p in features_text.split(",") if p.strip()]
         sample = [float(x) for x in parts]
 
-        # model expects shape (1, n_features)
         arr = np.array(sample).reshape(1, -1)
-        pred = model.predict(arr)
-        proba = None
+
+        prediction = model.predict(arr)
+        raw_prediction = int(prediction[0])
+
+        probability = None
         try:
-            proba = model.predict_proba(arr).tolist()
-        except:
-            proba = None
+            probability = model.predict_proba(arr).tolist()
+        except Exception as e:
+            print("Probability error:", e)
 
-        label = int(pred[0])
-        label_text = "Malignant (Cancer)" if label==1 else "Benign (No Cancer)"
+        label_text = (
+            "Malignant (Cancer)"
+            if raw_prediction == 1
+            else "Benign (No Cancer)"
+        )
 
-        return render_template("result.html", prediction=label_text, probability=proba, raw=label)
+        return render_template(
+            "result.html",
+            prediction=label_text,
+            probability=probability,
+            raw=raw_prediction
+        )
+
     except Exception as e:
-        flash(f"Error during prediction: {e}")
+        print("Prediction Error:", str(e))
+        flash(f"Error during prediction: {str(e)}")
         return redirect(url_for("index"))
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    app.run(debug=True)
+```
